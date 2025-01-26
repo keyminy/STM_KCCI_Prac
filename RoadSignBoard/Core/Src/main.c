@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "../Controller/LightController.h"
+#include "../Controller/RoadSignBoardController.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -89,19 +89,14 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  LightControllerInit();
+  RoadSignBoard_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  GPIOA->BSRR |= (1<<5); //set
-	  HAL_Delay(200);
-	  GPIOA->BSRR |= ((1<<5)<<16);// reset
-	  HAL_Delay(200);
-//	  LightController();
-//	  ShiftController();
+	  RoadSignBoardController();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
