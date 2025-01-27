@@ -30,4 +30,10 @@ void RoadSignBoard_Right_State(void);
 void RoadSignBoard_TwoWay_State(void);
 void RoadSignBoard_Blink_State(void);
 
+// speed
+void RoadSignBoard_SetSpeedTime(uint16_t speedTime);
+uint16_t RoadSignBoard_GetSpeedTime(void);
+void RoadSignBoard_ChangeSpeedTime(void);
+
+
 #endif /* CONTROLLER_ROADSIGNBOARDCONTROLLER_H_ */
