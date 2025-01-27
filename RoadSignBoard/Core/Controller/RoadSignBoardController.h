@@ -9,6 +9,7 @@
 #define CONTROLLER_ROADSIGNBOARDCONTROLLER_H_
 
 #include "main.h"
+#include "RoadSignBoard_EventController.h"
 #include "../Driver/led.h"
 #include "../Driver/button.h"
 

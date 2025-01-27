@@ -42,8 +42,6 @@ uint8_t RoadSignBoard_GetState(void){
 	return roadSignBoardState;
 }
 
-
-
 void RoadSignBoardController(void){
 	switch(RoadSignBoard_GetState()){
 	case IDLE:
@@ -64,79 +62,61 @@ void RoadSignBoardController(void){
 	}
 }
 
-void RoadSignBoard_Idle_State(void){
-	LED_AllOff();
-
-	if(Button1_GetState()){
-		RoadSignBoard_SetState(LEFT_SIGN);
-		LED_SetledState(0);
-	}
-
-	if(Button2_GetState()){
-		RoadSignBoard_ChangeSpeedTime();
-	}
-}
-
-void RoadSignBoard_Left_State(void){
+void RoadSignBoard_ExcuteHandler(void (*pfLED_DirectionSign)(void)){
 	static uint32_t prevTime = 0;
 
 	if(HAL_GetTick() - prevTime > RoadSignBoard_GetSpeedTime()){
 		prevTime = HAL_GetTick();
-		LED_LeftSign();
+		pfLED_DirectionSign(); //LED_LeftSign(); // Excute Function
 	}
-	if(Button1_GetState()){
-		RoadSignBoard_SetState(RIGHT_SIGN);
-		LED_SetledState(0);
-	}
-	if(Button2_GetState()){
-		RoadSignBoard_ChangeSpeedTime();
-	}
+}
+
+void RoadSignBoard_Idle_State(void){
+	LED_AllOff();
+	RoadSignBoardEventHandler(LEFT_SIGN);
+}
+
+void RoadSignBoard_Left_State(void){
+	RoadSignBoard_ExcuteHandler(LED_LeftSign);
+
+//	static uint32_t prevTime = 0;
+//
+//	if(HAL_GetTick() - prevTime > RoadSignBoard_GetSpeedTime()){
+//		prevTime = HAL_GetTick();
+//		LED_LeftSign();
+//	}
+	RoadSignBoardEventHandler(RIGHT_SIGN);
 }
 
 
 void RoadSignBoard_Right_State(void){
-	static uint32_t prevTime = 0;
-	if(HAL_GetTick() - prevTime > RoadSignBoard_GetSpeedTime()){
-		prevTime = HAL_GetTick();
-		LED_RightSign();
-	}
-	if(Button1_GetState()){
-		RoadSignBoard_SetState(TWOWAY_SIGN);
-		LED_SetledState(0);
-	}
-	if(Button2_GetState()){
-		RoadSignBoard_ChangeSpeedTime();
-	}
+	RoadSignBoard_ExcuteHandler(LED_RightSign);
+//	static uint32_t prevTime = 0;
+//	if(HAL_GetTick() - prevTime > RoadSignBoard_GetSpeedTime()){
+//		prevTime = HAL_GetTick();
+//		LED_RightSign();
+//	}
+	RoadSignBoardEventHandler(TWOWAY_SIGN);
 }
 
 void RoadSignBoard_TwoWay_State(void){
-	static uint32_t prevTime = 0;
-	if(HAL_GetTick() - prevTime > RoadSignBoard_GetSpeedTime()){
-		prevTime = HAL_GetTick();
-		LED_TwoWaySign();
-	}
-	if(Button1_GetState()){
-		RoadSignBoard_SetState(BLINK);
-		LED_SetledState(0);
-	}
-	if(Button2_GetState()){
-		RoadSignBoard_ChangeSpeedTime();
-	}
+	RoadSignBoard_ExcuteHandler(LED_TwoWaySign);
+//	static uint32_t prevTime = 0;
+//	if(HAL_GetTick() - prevTime > RoadSignBoard_GetSpeedTime()){
+//		prevTime = HAL_GetTick();
+//		LED_TwoWaySign();
+//	}
+	RoadSignBoardEventHandler(BLINK);
 }
 
 void RoadSignBoard_Blink_State(void){
-	static uint32_t prevTime = 0;
-
-	if(HAL_GetTick() - prevTime > RoadSignBoard_GetSpeedTime()){
-//	if(HAL_GetTick() - prevTime > 300){
-		prevTime = HAL_GetTick();
-		LED_AllBlink();
-	}
-	if(Button1_GetState()){
-		RoadSignBoard_SetState(IDLE);
-		LED_SetledState(0);
-	}
-	if(Button2_GetState()){
-		RoadSignBoard_ChangeSpeedTime();
-	}
+	RoadSignBoard_ExcuteHandler(LED_AllBlink);
+//	static uint32_t prevTime = 0;
+//
+//	if(HAL_GetTick() - prevTime > RoadSignBoard_GetSpeedTime()){
+////	if(HAL_GetTick() - prevTime > 300){
+//		prevTime = HAL_GetTick();
+//		LED_AllBlink();
+//	}
+	RoadSignBoardEventHandler(IDLE);
 }
