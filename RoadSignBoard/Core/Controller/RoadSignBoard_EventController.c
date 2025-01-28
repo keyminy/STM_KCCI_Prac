@@ -6,7 +6,9 @@
  */
 #include "RoadSignBoard_EventController.h"
 
-void RoadSignBoardEventHandler(uint8_t state){
+uint8_t roadSignBoardState;
+
+void RoadSignBoard_EventHandler(uint8_t state){
 	if(Button1_GetState()){
 		RoadSignBoard_SetState(state);
 		LED_SetledState(0);
@@ -14,4 +16,12 @@ void RoadSignBoardEventHandler(uint8_t state){
 	if(Button2_GetState()){
 		RoadSignBoard_ChangeSpeedTime();
 	}
+}
+
+void RoadSignBoard_SetState(uint8_t state){
+	roadSignBoardState = state;
+}
+
+uint8_t RoadSignBoard_GetState(void){
+	return roadSignBoardState;
 }
