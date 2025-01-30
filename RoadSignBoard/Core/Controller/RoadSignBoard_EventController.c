@@ -9,11 +9,11 @@
 uint8_t roadSignBoardState;
 
 void RoadSignBoard_EventHandler(uint8_t state){
-	if(Button1_GetState()){
+	if(Button_GetState(&hButton_Mode)){
 		RoadSignBoard_SetState(state);
 		LED_SetledState(0);
 	}
-	if(Button2_GetState()){
+	if(Button_GetState(&hButton_SpeedTime)){
 		RoadSignBoard_ChangeSpeedTime();
 	}
 }

@@ -15,7 +15,17 @@
 #define PUSHED		0
 #define RELEASED	1
 
-uint8_t Button_GetState();
+typedef struct{
+	GPIO_TypeDef* GPIOx;
+	uint16_t GPIO_Pin;
+	uint8_t prevState;
+} BUTTON_HandleTypeDef;
+// 버튼 핸들러 타입이다
+// prefix h : button handler
+extern BUTTON_HandleTypeDef hButton_Mode;
+extern BUTTON_HandleTypeDef hButton_SpeedTime;
+
+uint8_t Button_GetState(BUTTON_HandleTypeDef* hButton);
 uint8_t Button1_GetState();
 uint8_t Button2_GetState();
 
