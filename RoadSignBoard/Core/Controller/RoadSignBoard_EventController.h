@@ -12,6 +12,7 @@
 #include "RoadSignBoard_SpeedTimeController.h"
 #include "../Driver/button.h"
 #include "../Driver/led.h"
+#include "../Driver/FND.h"
 
 void RoadSignBoard_EventHandler(uint8_t state);
 void RoadSignBoard_SetState(uint8_t state);

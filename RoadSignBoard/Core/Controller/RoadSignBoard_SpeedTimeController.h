@@ -10,8 +10,8 @@
 #include "main.h"
 
 // speed
-void RoadSignBoard_SetSpeedTime(uint16_t speedTime);
-uint16_t RoadSignBoard_GetSpeedTime(void);
+uint8_t RoadSignBoard_GetSpeedTime(void);
 void RoadSignBoard_ChangeSpeedTime(void);
+void RoadSignBoard_SetSpeedState(uint8_t state);
 
 #endif /* CONTROLLER_ROADSIGNBOARD_SPEEDTIMECONTROLLER_H_ */
