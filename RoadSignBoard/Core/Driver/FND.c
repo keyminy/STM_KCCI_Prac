@@ -26,12 +26,12 @@ void FND_WriteData(void){
 	static uint8_t fndState = 0;
 	fndState = (fndState+1) % 4;
 
-	uint8_t FND_FONT[] = {
-	        0xC0, // 0
-	        0xF9, // 1
-	        0xA4, // 2
+	uint16_t FND_FONT[] = {
+	        0x40, // 0
+	        0xF9|(FND_D_Pin), // 1
+	        0xA4|(FND_C_Pin), // 2
 	        0xB0, // 3
-	        0x99, // 4
+	        0x99|(FND_D_Pin), // 4
 	        0x92, // 5
 	        0x82, // 6
 	        0xF8, // 7
