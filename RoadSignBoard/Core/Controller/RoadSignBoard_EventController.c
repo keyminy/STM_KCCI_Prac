@@ -13,12 +13,14 @@ void RoadSignBoard_EventHandler(uint8_t state){
 		RoadSignBoard_SetState(state);
 		FND_ShowMode(state);
 		LED_SetledState(0);
+		BUZZER_ModeButtonSound();
 	}
 	if(Button_GetState(&hButton_SpeedTime)){
 		RoadSignBoard_ChangeSpeedTime();
 //		FND_ShowSpeed(???);
 		FND_ShowSpeed(RoadSignBoard_GetSpeedState());
 		//RoadSignBoard_GetSpeedState() : 0,1,2,3,4,5...
+		BUZZER_SpeedButtonSound();
 	}
 }
 
