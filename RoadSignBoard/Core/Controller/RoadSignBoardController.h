@@ -13,7 +13,8 @@
 #include "RoadSignBoard_SpeedTimeController.h"
 #include "../Driver/led.h"
 #include "../Driver/button.h"
-//#include "../Driver/FND.h"
+#include "../Driver/FND.h"
+#include "../Driver/buzzer.h"
 
 
 enum {
@@ -30,7 +31,6 @@ void RoadSignBoard_Left_State(void);
 void RoadSignBoard_Right_State(void);
 void RoadSignBoard_TwoWay_State(void);
 void RoadSignBoard_Blink_State(void);
-
 
 
 //fp

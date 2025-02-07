@@ -12,6 +12,7 @@ void RoadSignBoard_Init(void){
 	RoadSignBoard_SetState(IDLE);
 	RoadSignBoard_SetSpeedTime(100);// 초기값 설정 : 100ms
 	RoadSignBoard_SetSpeedState(0);
+	BUZZER_Init(&htim2, TIM_CHANNEL_1);
 }
 
 void RoadSignBoardController(void){
