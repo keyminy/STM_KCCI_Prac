@@ -40,6 +40,7 @@ void BUZZER_SpeedButtonSound(void){
 void BUZZER_StartFreq(void){
 	// PWM Start
 	HAL_TIM_PWM_Start(hBuzzTim, buzzChannel);
+	__HAL_TIM_SET_COUNTER(hBuzzTim,0); // PWM시작 시 TCNT = 0
 }
 
 void Buzzer_StopFreq(void){
