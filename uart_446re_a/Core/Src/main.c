@@ -57,13 +57,20 @@ static void MX_USART2_UART_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 uint8_t rxUart2Data;
-uint8_t rxUart2Buff[50];
+uint8_t rxUart2Tail = 0;
 uint8_t rxUart2ReadyFlag = 0;
+uint8_t rxUart2Buff[50] = {0,};
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 	if(huart->Instance == USART2){
-		rxUart2Buff[0] = rxUart2Data; // set data to 0 index
-		rxUart2ReadyFlag = 1; // message arrived
+		if(rxUart2Data == 0x0a){ // '0x0a' = End of File
+			rxUart2Buff[rxUart2Tail] = '\0'; // set NULL char to end index
+			rxUart2Tail = 0;
+			rxUart2ReadyFlag = 1; // message arrived
+		}else{
+			rxUart2Buff[rxUart2Tail] = rxUart2Data; // set data to 0 index
+			rxUart2Tail++;
+		}
 	  HAL_UART_Receive_IT(&huart2, &rxUart2Data, 1); // important! resetting IT EN
 	}
 }
@@ -118,16 +125,21 @@ int main(void)
   {
 	  if(rxUart2ReadyFlag){
 		  rxUart2ReadyFlag = 0; // clear!!
-		  if(rxUart2Buff[0] == '1'){
+		  if(strncmp((char*)rxUart2Buff,"LED1",4) == 0){
+			  if(strncmp((char*)&rxUart2Buff[4],"ON",2) == 0){
+				  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+			  }
+			  else if(strncmp((char*)&rxUart2Buff[4],"OFF",3) == 0){
+				  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+			  }
+		  }
+		  else if(strncmp(rxUart2Buff,"LED2",4) == 0){
 			  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
 		  }
-		  else if(rxUart2Buff[0] == '2'){
+		  else if(strncmp(rxUart2Buff,"LED3",4) == 0){
 			  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
 		  }
-		  else if(rxUart2Buff[0] == '3'){
-			  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-		  }
-		  else if(rxUart2Buff[0] == '4'){
+		  else if(strncmp(rxUart2Buff,"LED4",4) == 0){
 			  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
 		  }
 	  }
