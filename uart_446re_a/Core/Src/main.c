@@ -56,22 +56,13 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint8_t rxUart2Data;
-uint8_t rxUart2Tail = 0;
-uint8_t rxUart2ReadyFlag = 0;
-uint8_t rxUart2Buff[50] = {0,};
+
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 	if(huart->Instance == USART2){
-		if(rxUart2Data == 0x0a){ // '0x0a' = End of File
-			rxUart2Buff[rxUart2Tail] = '\0'; // set NULL char to end index
-			rxUart2Tail = 0;
-			rxUart2ReadyFlag = 1; // message arrived
-		}else{
-			rxUart2Buff[rxUart2Tail] = rxUart2Data; // set data to 0 index
-			rxUart2Tail++;
-		}
-	  HAL_UART_Receive_IT(&huart2, &rxUart2Data, 1); // important! resetting IT EN
+		UART_ISR_Process(&hQBuff);
+		// in uart.c
+//	  HAL_UART_Receive_IT(&huart2, &uart2RxData, 1); // important! resetting IT EN
 	}
 }
 
@@ -114,35 +105,15 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  HAL_UART_Receive_IT(&huart2, &rxUart2Data, 1);
-  char buff[30];
-  int count = 0;
+  DividerFactory_Init();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  if(rxUart2ReadyFlag){
-		  rxUart2ReadyFlag = 0; // clear!!
-		  if(strncmp((char*)rxUart2Buff,"LED1",4) == 0){
-			  if(strncmp((char*)&rxUart2Buff[4],"ON",2) == 0){
-				  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
-			  }
-			  else if(strncmp((char*)&rxUart2Buff[4],"OFF",3) == 0){
-				  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
-			  }
-		  }
-		  else if(strncmp(rxUart2Buff,"LED2",4) == 0){
-			  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-		  }
-		  else if(strncmp(rxUart2Buff,"LED3",4) == 0){
-			  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-		  }
-		  else if(strncmp(rxUart2Buff,"LED4",4) == 0){
-			  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-		  }
-	  }
+	  DividerFactory_Controller();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -245,6 +216,9 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
 
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6|GPIO_PIN_8, GPIO_PIN_RESET);
+
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
@@ -257,6 +231,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PC6 PC8 */
+  GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_8;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
 }
 
