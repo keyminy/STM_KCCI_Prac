@@ -12,13 +12,13 @@ void StepMotor_Run(void){
 void StepMotor_Speed(uint8_t speed){
 	// 타이머 인터럽트 발생되는 주기 변경하여, 스텝모터 스피드 설정하는 함수
 	switch (speed) {
-		case SPEED_1:
+		case SPEED1:
 			__HAL_TIM_SET_AUTORELOAD(&htim2,MOTOR_SPEED_1);
 			break;
-		case SPEED_2:
+		case SPEED2:
 			__HAL_TIM_SET_AUTORELOAD(&htim2,MOTOR_SPEED_2);
 			break;
-		case SPEED_3:
+		case SPEED3:
 			__HAL_TIM_SET_AUTORELOAD(&htim2,MOTOR_SPEED_3);
 			break;
 	}
@@ -27,10 +27,10 @@ void StepMotor_Speed(uint8_t speed){
 
 void StepMotor_Direction(uint8_t dir){
 	switch (dir) {
-		case CW:
+		case MOTOR_CW:
 			StepMotor_CW();
 			break;
-		case CCW:
+		case MOTOR_CCW:
 			StepMotor_CCW();
 			break;
 	}
@@ -46,28 +46,24 @@ void StepMotor_CW(){
 		  HAL_GPIO_WritePin(STEP_B1_GPIO, STEP_B1_GPIO_PIN, GPIO_PIN_RESET);
 		  HAL_GPIO_WritePin(STEP_A2_GPIO, STEP_A2_GPIO_PIN, GPIO_PIN_RESET);
 		  HAL_GPIO_WritePin(STEP_B2_GPIO, STEP_B2_GPIO_PIN, GPIO_PIN_SET);
-		  HAL_Delay(1);
 		break;
 		case 1:
 		  HAL_GPIO_WritePin(STEP_A1_GPIO, STEP_A1_GPIO_PIN, GPIO_PIN_RESET);
 		  HAL_GPIO_WritePin(STEP_B1_GPIO, STEP_B1_GPIO_PIN, GPIO_PIN_RESET);
 		  HAL_GPIO_WritePin(STEP_A2_GPIO, STEP_A2_GPIO_PIN, GPIO_PIN_SET);
 		  HAL_GPIO_WritePin(STEP_B2_GPIO, STEP_B2_GPIO_PIN, GPIO_PIN_SET);
-		  HAL_Delay(1);
 		break;
 		case 2:
 		  HAL_GPIO_WritePin(STEP_A1_GPIO, STEP_A1_GPIO_PIN, GPIO_PIN_RESET);
 		  HAL_GPIO_WritePin(STEP_B1_GPIO, STEP_B1_GPIO_PIN, GPIO_PIN_SET);
 		  HAL_GPIO_WritePin(STEP_A2_GPIO, STEP_A2_GPIO_PIN, GPIO_PIN_SET);
 		  HAL_GPIO_WritePin(STEP_B2_GPIO, STEP_B2_GPIO_PIN, GPIO_PIN_RESET);
-		  HAL_Delay(1);
 		break;
 		case 3:
 		  HAL_GPIO_WritePin(STEP_A1_GPIO, STEP_A1_GPIO_PIN, GPIO_PIN_SET);
 		  HAL_GPIO_WritePin(STEP_B1_GPIO, STEP_B1_GPIO_PIN, GPIO_PIN_SET);
 		  HAL_GPIO_WritePin(STEP_A2_GPIO, STEP_A2_GPIO_PIN, GPIO_PIN_RESET);
 		  HAL_GPIO_WritePin(STEP_B2_GPIO, STEP_B2_GPIO_PIN, GPIO_PIN_RESET);
-		  HAL_Delay(1);
 		break;
 	}
 }
@@ -82,28 +78,24 @@ void StepMotor_CCW(){
 	  HAL_GPIO_WritePin(STEP_B1_GPIO, STEP_B1_GPIO_PIN, GPIO_PIN_SET);
 	  HAL_GPIO_WritePin(STEP_A2_GPIO, STEP_A2_GPIO_PIN, GPIO_PIN_RESET);
 	  HAL_GPIO_WritePin(STEP_B2_GPIO, STEP_B2_GPIO_PIN, GPIO_PIN_RESET);
-	  HAL_Delay(1);
 		break;
 	case 1:
 	  HAL_GPIO_WritePin(STEP_A1_GPIO, STEP_A1_GPIO_PIN, GPIO_PIN_RESET);
 	  HAL_GPIO_WritePin(STEP_B1_GPIO, STEP_B1_GPIO_PIN, GPIO_PIN_SET);
 	  HAL_GPIO_WritePin(STEP_A2_GPIO, STEP_A2_GPIO_PIN, GPIO_PIN_SET);
 	  HAL_GPIO_WritePin(STEP_B2_GPIO, STEP_B2_GPIO_PIN, GPIO_PIN_RESET);
-	  HAL_Delay(1);
 		break;
 	case 2:
 	  HAL_GPIO_WritePin(STEP_A1_GPIO, STEP_A1_GPIO_PIN, GPIO_PIN_RESET);
 	  HAL_GPIO_WritePin(STEP_B1_GPIO, STEP_B1_GPIO_PIN, GPIO_PIN_RESET);
 	  HAL_GPIO_WritePin(STEP_A2_GPIO, STEP_A2_GPIO_PIN, GPIO_PIN_SET);
 	  HAL_GPIO_WritePin(STEP_B2_GPIO, STEP_B2_GPIO_PIN, GPIO_PIN_SET);
-	  HAL_Delay(1);
 		break;
 	case 3:
 	  HAL_GPIO_WritePin(STEP_A1_GPIO, STEP_A1_GPIO_PIN, GPIO_PIN_SET);
 	  HAL_GPIO_WritePin(STEP_B1_GPIO, STEP_B1_GPIO_PIN, GPIO_PIN_RESET);
 	  HAL_GPIO_WritePin(STEP_A2_GPIO, STEP_A2_GPIO_PIN, GPIO_PIN_RESET);
 	  HAL_GPIO_WritePin(STEP_B2_GPIO, STEP_B2_GPIO_PIN, GPIO_PIN_SET);
-	  HAL_Delay(1);
 		break;
 	}
 }

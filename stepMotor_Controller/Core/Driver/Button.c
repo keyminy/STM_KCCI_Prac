@@ -5,7 +5,7 @@ BUTTON_HandleTypeDef hButton_Dir 		= {BTN2_GPIO_Port,BTN2_Pin,RELEASED};
 BUTTON_HandleTypeDef hButton_Speed 		= {BTN3_GPIO_Port,BTN3_Pin,RELEASED};
 
 //void Button_GetState(&hButton_RunStop){
-void Button_GetState(BUTTON_HandleTypeDef* hButton){
+uint8_t Button_GetState(BUTTON_HandleTypeDef* hButton){
 
 	//	static uint8_t prevState = RELEASED;
 

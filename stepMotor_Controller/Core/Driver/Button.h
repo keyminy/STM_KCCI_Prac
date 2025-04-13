@@ -14,9 +14,6 @@
 #define PUSHED		0
 #define RELEASED	1
 
-extern BUTTON_HandleTypeDef hButton_RunStop;
-extern BUTTON_HandleTypeDef hButton_Dir;
-extern BUTTON_HandleTypeDef hButton_Speed;
 
 typedef struct{
 	GPIO_TypeDef* GPIOx;
@@ -24,6 +21,10 @@ typedef struct{
 	uint8_t prevState;
 } BUTTON_HandleTypeDef;
 
-void Button_GetState(BUTTON_HandleTypeDef* hButton);
+extern BUTTON_HandleTypeDef hButton_RunStop;
+extern BUTTON_HandleTypeDef hButton_Dir;
+extern BUTTON_HandleTypeDef hButton_Speed;
+
+uint8_t Button_GetState(BUTTON_HandleTypeDef* hButton);
 
 #endif /* DRIVER_BUTTON_H_ */

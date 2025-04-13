@@ -8,17 +8,28 @@
 #ifndef CONTROLLER_STEPMOTOR_CONTROLLER_H_
 #define CONTROLLER_STEPMOTOR_CONTROLLER_H_
 #include "main.h"
+#include "../Driver/Button.h"
+#include "../Driver/StepMotor.h"
 
-#define STEP_A1_GPIO GPIOC
-#define STEP_A1_GPIO_PIN GPIO_PIN_0
-#define STEP_B1_GPIO GPIOC
-#define STEP_B1_GPIO_PIN GPIO_PIN_1
-#define STEP_A2_GPIO GPIOC
-#define STEP_A2_GPIO_PIN GPIO_PIN_2
-#define STEP_B2_GPIO GPIOC
-#define STEP_B2_GPIO_PIN GPIO_PIN_3
+typedef enum {
+	STEPMOTOR_STOP,
+	STEPMOTOR_RUN
+} eRunStop;
+
+enum {
+	SPEED_1,
+	SPEED_2,
+	SPEED_3
+};
+
+enum {
+	CW,
+	CCW
+};
 
 
+void StepMotor_Control_ISR_Process(void);
+void StepMotor_Controller_Init(void);
 void StepMotor_Controller(void);
 void StepMotor_Control_Run(void);
 void StepMotor_Control_Stop(void);

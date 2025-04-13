@@ -1,8 +1,26 @@
 #include "StepMotor_Controller.h"
 
-uint8_t stepMotorRunStopState;
+eRunStop stepMotorRunStopState;
 uint8_t stepMotorSpeedState;
 uint8_t stepMotorDirState;
+
+void StepMotor_Control_ISR_Process(void){
+	switch(stepMotorDirState){
+	case CW:
+		StepMotor_CW();
+		break;
+	case CCW:
+		StepMotor_CCW();
+		break;
+	}
+}
+
+
+void StepMotor_Controller_Init(void){
+	stepMotorRunStopState = STEPMOTOR_STOP;
+	stepMotorSpeedState = SPEED_1;
+	stepMotorDirState = CW;
+}
 
 void StepMotor_Controller(void){
 	switch (stepMotorRunStopState) {
@@ -22,10 +40,9 @@ void StepMotor_Control_Run(void){
 	StepMotor_Control_Direction();
 	//hButton_RunStop : BTN1
 	if(Button_GetState(&hButton_RunStop)){
-
+		stepMotorRunStopState = STEPMOTOR_STOP;
 	}
 }
-
 
 
 void StepMotor_Control_Stop(void){
@@ -33,7 +50,7 @@ void StepMotor_Control_Stop(void){
 
 	// hButton_RunStop : BTN1
 	if(Button_GetState(&hButton_RunStop)){
-
+		stepMotorRunStopState = STEPMOTOR_RUN;
 	}
 }
 
@@ -44,22 +61,25 @@ void StepMotor_Control_Speed(){
 	case SPEED_1:
 		StepMotor_Speed(SPEED_1);
 		// hButton_Speed : BTN3
-		if(Button_GetState(hButton_Speed)){
-
+		if(Button_GetState(&hButton_Speed)){
+//			__HAL_TIM_SET_COUNTER(&htim2,0);
+			stepMotorSpeedState = SPEED_2;
 		}
 		break;
 	case SPEED_2:
 		StepMotor_Speed(SPEED_2);
 		// hButton_Speed : BTN3
-		if(Button_GetState(hButton_Speed)){
-
+		if(Button_GetState(&hButton_Speed)){
+//			__HAL_TIM_SET_COUNTER(&htim2,0);
+			stepMotorSpeedState = SPEED_3;
 		}
 		break;
 	case SPEED_3:
 		StepMotor_Speed(SPEED_3);
 		// hButton_Speed : BTN3
-		if(Button_GetState(hButton_Speed)){
-
+		if(Button_GetState(&hButton_Speed)){
+//			__HAL_TIM_SET_COUNTER(&htim2,0);
+			stepMotorSpeedState = SPEED_1;
 		}
 		break;
 	}
@@ -70,17 +90,19 @@ void StepMotor_Control_Speed(){
 void StepMotor_Control_Direction(){
 	switch (stepMotorDirState) {
 		case CW:
-			StepMotor_Direction(CW); // Driver
+			//ISR에서 하는중
+			//StepMotor_Direction(CW); // Driver
 			// hButton_Dir : BTN2
-			if(Button_GetState(hButton_Dir)){
-
+			if(Button_GetState(&hButton_Dir)){
+				stepMotorDirState = CCW;
 			}
 			break;
 		case CCW:
-			StepMotor_Direction(CCW); // Driver
+			//ISR에서 하는중
+			//StepMotor_Direction(CCW); // Driver
 			// hButton_Dir : BTN2
-			if(Button_GetState(hButton_Dir)){
-
+			if(Button_GetState(&hButton_Dir)){
+				stepMotorDirState = CW;
 			}
 			break;
 	}
