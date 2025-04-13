@@ -43,7 +43,7 @@ uint8_t UART_SetReadyQBuff(QUART_HandleTypeDef *hQUart,uint8_t flag){
 	hQUart->readyFlag = flag;
 }
 
-uint8_t *UART_GetBuff(QUART_HandleTypeDef *hQUart){
+uint8_t* UART_GetBuff(QUART_HandleTypeDef *hQUart){
 	// buffer의 주소를 접근할 수 있는 함수
 	return hQUart->buffer;
 }
