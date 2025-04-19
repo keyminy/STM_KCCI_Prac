@@ -155,7 +155,7 @@ int main(void)
 		  // when UART2 receives a message, UART2 send message to UART1(Bluetooth)
 //		  sprintf(uart2RxBuff,"%s\n");
 //		  printf("%s\n",uart2RxBuff);
-		  HAL_UART_Transmit(&huart1, uart2RxBuff, strlen(uart2RxBuff), 1000);
+		  HAL_UART_Transmit(&huart1, uart2RxBuff, strlen(uart2RxBuff), 100);
 	  }else if(uart1RxFlag){
 		  uart1RxFlag = 0;
 		  // UART1 : PC(USB TO TTL) <-> BT
