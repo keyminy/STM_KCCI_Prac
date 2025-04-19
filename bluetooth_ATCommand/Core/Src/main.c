@@ -107,7 +107,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 		}
 		HAL_UART_Receive_IT(&huart1, &uart1RxData, 1);
 	}
-	HAL_UART_Receive_IT(&huart2, &uart2RxData, 1);
 }
 
 /* USER CODE END 0 */
@@ -156,7 +155,7 @@ int main(void)
 		  // when UART2 receives a message, UART2 send message to UART1(Bluetooth)
 //		  sprintf(uart2RxBuff,"%s\n");
 //		  printf("%s\n",uart2RxBuff);
-		  HAL_UART_Transmit(&huart1, uart2RxBuff, strlen(uart2RxBuff), 100);
+		  HAL_UART_Transmit(&huart1, uart2RxBuff, strlen(uart2RxBuff), 1000);
 	  }else if(uart1RxFlag){
 		  uart1RxFlag = 0;
 		  // UART1 : PC(USB TO TTL) <-> BT
