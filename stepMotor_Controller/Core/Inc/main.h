@@ -76,6 +76,8 @@ void Error_Handler(void);
 #define BTN3_GPIO_Port GPIOC
 #define SWO_Pin GPIO_PIN_3
 #define SWO_GPIO_Port GPIOB
+#define SPI2_SS_Pin GPIO_PIN_6
+#define SPI2_SS_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
