@@ -66,7 +66,7 @@ static void MX_TIM4_Init(void);
 /* USER CODE BEGIN 0 */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	if(htim->Instance == TIM4){
-//		FND_ISR_Process();
+		FND_ISR_Process();
 	}
 	else if(htim->Instance == TIM2){
 //		StepMotor_Control_ISR_Process();
@@ -114,25 +114,10 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   uint16_t counter = 0;
-  uint8_t fndData[2];
   while (1)
   {
-	  fndData[1] = 0x00; // low bit of FND(a,b,c,d,e,f,g,dp)
-	  fndData[0] = 0x00;// high bit of FND(DIGIT 1,2,3,4)
-	  // 0x80 : 1000_0000 -> 7pin(D4 is on), 1 is digit on!...
-	  HAL_GPIO_WritePin(SPI2_SS_GPIO_Port, SPI2_SS_Pin, GPIO_PIN_RESET);
-	  HAL_SPI_Transmit(&hspi2, fndData, 2, 1000); // 2byte, timeout 1s
-	  HAL_GPIO_WritePin(SPI2_SS_GPIO_Port, SPI2_SS_Pin, GPIO_PIN_SET);
-	  HAL_Delay(300);
-
-	  fndData[0] = 0xff;
-	  HAL_GPIO_WritePin(SPI2_SS_GPIO_Port, SPI2_SS_Pin, GPIO_PIN_RESET);
-	  HAL_SPI_Transmit(&hspi2, fndData, 2, 1000); // 2byte, timeout 1s
-	  HAL_GPIO_WritePin(SPI2_SS_GPIO_Port, SPI2_SS_Pin, GPIO_PIN_SET);
-	  HAL_Delay(300);
-
-//	  FND_SetData(counter++);
-//	  HAL_Delay(100); //100ms = 0.1sec
+	  FND_SetData(counter++);
+	  HAL_Delay(100); //100ms = 0.1sec
 //	  StepMotor_Controller();
     /* USER CODE END WHILE */
 
