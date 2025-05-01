@@ -1,6 +1,7 @@
 #include "SPI.h"
 
 SPI_CONTROL_HandleTypedef hSpiFnd = {&hspi2,SPI2_SS_GPIO_Port,SPI2_SS_Pin};
+SPI_CONTROL_HandleTypedef hSpiRfid = {&hspi2,SPI_RFID_SS_GPIO_Port,SPI_RFID_SS_Pin};
 
 void SPI_WriteStream(SPI_CONTROL_HandleTypedef* hSpi,uint8_t* data,uint16_t Size) {
 	HAL_GPIO_WritePin(hSpi->GPIO, hSpi->GPIO_Pin, GPIO_PIN_RESET);
@@ -19,7 +20,7 @@ void SPI_ReadStream(SPI_CONTROL_HandleTypedef* hSpi,uint8_t* data,uint16_t Size)
 	HAL_SPI_Receive(hSpi->hspi, data, Size, 1000); // read data in the variable "data"
 	HAL_GPIO_WritePin(hSpi->GPIO, hSpi->GPIO_Pin, GPIO_PIN_SET);
 }
-void SPI_ReadByte(SPI_CONTROL_HandleTypedef* hSpi) {
+uint8_t SPI_ReadByte(SPI_CONTROL_HandleTypedef* hSpi) {
 	uint8_t rxData;
 	HAL_GPIO_WritePin(hSpi->GPIO, hSpi->GPIO_Pin, GPIO_PIN_RESET);
 	HAL_SPI_Receive(hSpi->hspi, &rxData, 1, 1000); // read 1byte data in the variable "rxData"
@@ -35,7 +36,7 @@ void SPI_TranceiveStream(SPI_CONTROL_HandleTypedef* hSpi,uint8_t* txData,uint8_t
 	HAL_GPIO_WritePin(hSpi->GPIO, hSpi->GPIO_Pin, GPIO_PIN_SET);
 }
 
-void SPI_TranceiveByte(SPI_CONTROL_HandleTypedef* hSpi,uint8_t txData)
+uint8_t SPI_TranceiveByte(SPI_CONTROL_HandleTypedef* hSpi,uint8_t txData)
 {
 	uint8_t rxData;
 	HAL_GPIO_WritePin(hSpi->GPIO, hSpi->GPIO_Pin, GPIO_PIN_RESET);
