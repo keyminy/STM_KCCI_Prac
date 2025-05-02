@@ -41,6 +41,10 @@ void StepMotor_Control_Run(void){
 	//hButton_RunStop : BTN1
 	if(Button_GetState(&hButton_RunStop)){
 		stepMotorRunStopState = STEPMOTOR_STOP;
+		char buff[30];
+		sprintf(buff, "STEP MOTOR RUN");
+	    move_cursor(0,0);
+	    lcd_string(buff);
 	}
 }
 
@@ -51,6 +55,10 @@ void StepMotor_Control_Stop(void){
 	// hButton_RunStop : BTN1
 	if(Button_GetState(&hButton_RunStop)){
 		stepMotorRunStopState = STEPMOTOR_RUN;
+		char buff[30];
+		sprintf(buff, "STEP MOTOR STOP");
+	    move_cursor(0,0);
+	    lcd_string(buff);
 	}
 }
 

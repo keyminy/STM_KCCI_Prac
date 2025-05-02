@@ -42,6 +42,7 @@ extern "C" {
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim4;
 extern SPI_HandleTypeDef hspi2;
+extern I2C_HandleTypeDef hi2c1;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
