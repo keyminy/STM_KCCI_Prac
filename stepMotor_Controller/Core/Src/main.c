@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -134,6 +135,10 @@ int main(void)
 	  printf("No reader found\n");
   }
 
+  uint8_t validCard[2][5] = {
+		  {0x0c,0xc8,0x4c,0x30, 0xb8},
+		  {0,}
+  };
   while (1)
   {
 	  byte = mfrc522_request(PICC_REQALL, str);
@@ -148,12 +153,26 @@ int main(void)
 			  printf("0x%02x ",str[i]);
 		  }
 		  printf("\n");
+
+		  for(int i=0; i < 2; i++){
+			  // compare 5digits
+			  if(!strncmp(validCard[i],str,5)){
+				  str[5] = '\0';
+				  printf("Valid Card! : %d(row)\n",i);
+			  }else{
+				  str[5] = '\0';
+				  printf("Invalid Card! : %d(row)\n",i);
+			  }
+		  }
+
 	  }
 	  HAL_Delay(1000);
+
+	  /* FND */
 //	  FND_SetData(counter++);
 //	  HAL_Delay(100); //100ms = 0.1sec
 
-//	  StepMotor_Controller();
+	/*StepMotor_Controller(); */
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
