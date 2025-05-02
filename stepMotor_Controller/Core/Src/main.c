@@ -24,6 +24,8 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include <string.h>
+#include "../Controller/rfid.h"
+#include "../Controller/rfidDatabase.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -116,7 +118,7 @@ int main(void)
   MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
   StepMotor_Controller_Init();
-  mfrc522_init(&hspi2);
+  RFID_Init();
   HAL_TIM_Base_Start_IT(&htim4);
   /* USER CODE END 2 */
 
@@ -124,48 +126,27 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 //  uint16_t counter = 0;
   printf("Hello??\n");
-  uint8_t byte;
   uint8_t str[MAX_LEN];
-  byte = mfrc522_read(VersionReg);
-  printf("ver : %0x\n",byte); // read Version Info byte
-  if(byte == 0x92){
-	  printf("MIFARE RC522v1\n");
-	  printf("Detected!\n");
-  }else{
-	  printf("No reader found\n");
-  }
 
-  uint8_t validCard[2][5] = {
-		  {0x0c,0xc8,0x4c,0x30, 0xb8},
-		  {0,}
-  };
   while (1)
   {
-	  byte = mfrc522_request(PICC_REQALL, str);
-	  if(byte == CARD_FOUND){
-		  for(int i=0; i < MAX_LEN; i++){
-			  str[i] = ' ';
-		  }
+	  if(RFID_IsDetectCard()){
 		  // find serial number
-		  byte = mfrc522_get_card_serial(str);
+		  RFID_GetCardNumber(str);
+
 		  // print serial number
 		  for(int i=0; i < 5; i++){
 			  printf("0x%02x ",str[i]);
 		  }
 		  printf("\n");
 
-		  for(int i=0; i < 2; i++){
-			  // compare 5digits
-			  if(!strncmp(validCard[i],str,5)){
-				  str[5] = '\0';
-				  printf("Valid Card! : %d(row)\n",i);
-			  }else{
-				  str[5] = '\0';
-				  printf("Invalid Card! : %d(row)\n",i);
-			  }
+		  if(Rfid_DB_CheckNumber(str)){
+			  printf("Valid Card!\n");
+		  }else{
+			  printf("Invalid Card\n");
 		  }
-
 	  }
+	  // check every 1second
 	  HAL_Delay(1000);
 
 	  /* FND */
