@@ -3,6 +3,10 @@
 SPI_CONTROL_HandleTypedef hSpiFnd = {&hspi2,SPI2_SS_GPIO_Port,SPI2_SS_Pin};
 SPI_CONTROL_HandleTypedef hSpiRfid = {&hspi2,SPI_RFID_SS_GPIO_Port,SPI_RFID_SS_Pin};
 
+void SPI_Init(SPI_CONTROL_HandleTypedef* hSpi,SPI_HandleTypeDef* hspi){
+	hSpi->hspi = hspi;
+}
+
 void SPI_WriteStream(SPI_CONTROL_HandleTypedef* hSpi,uint8_t* data,uint16_t Size) {
 	HAL_GPIO_WritePin(hSpi->GPIO, hSpi->GPIO_Pin, GPIO_PIN_RESET);
 	HAL_SPI_Transmit(hSpi->hspi, data, Size, 1000); // 2byte, timeout 1s

@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -64,9 +64,16 @@ static void MX_TIM4_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+int _write(int file, char *ptr, int len)
+{
+	HAL_UART_Transmit(&huart2, ptr, len, 1000);
+	return len;
+}
+
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	if(htim->Instance == TIM4){
-		FND_ISR_Process();
+//		FND_ISR_Process();
 	}
 	else if(htim->Instance == TIM2){
 //		StepMotor_Control_ISR_Process();
@@ -108,16 +115,44 @@ int main(void)
   MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
   StepMotor_Controller_Init();
+  mfrc522_init(&hspi2);
   HAL_TIM_Base_Start_IT(&htim4);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint16_t counter = 0;
+//  uint16_t counter = 0;
+  printf("Hello??\n");
+  uint8_t byte;
+  uint8_t str[MAX_LEN];
+  byte = mfrc522_read(VersionReg);
+  printf("ver : %0x\n",byte); // read Version Info byte
+  if(byte == 0x92){
+	  printf("MIFARE RC522v1\n");
+	  printf("Detected!\n");
+  }else{
+	  printf("No reader found\n");
+  }
+
   while (1)
   {
-	  FND_SetData(counter++);
-	  HAL_Delay(100); //100ms = 0.1sec
+	  byte = mfrc522_request(PICC_REQALL, str);
+	  if(byte == CARD_FOUND){
+		  for(int i=0; i < MAX_LEN; i++){
+			  str[i] = ' ';
+		  }
+		  // find serial number
+		  byte = mfrc522_get_card_serial(str);
+		  // print serial number
+		  for(int i=0; i < 5; i++){
+			  printf("0x%02x ",str[i]);
+		  }
+		  printf("\n");
+	  }
+	  HAL_Delay(1000);
+//	  FND_SetData(counter++);
+//	  HAL_Delay(100); //100ms = 0.1sec
+
 //	  StepMotor_Controller();
     /* USER CODE END WHILE */
 
@@ -313,7 +348,7 @@ static void MX_USART2_UART_Init(void)
 
   /* USER CODE END USART2_Init 1 */
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
+  huart2.Init.BaudRate = 9600;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;

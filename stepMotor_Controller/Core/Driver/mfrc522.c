@@ -41,7 +41,9 @@ VCC  ----- +3.3v
 void mfrc522_init(SPI_HandleTypeDef *hspi)
 {
 	uint8_t byte;
-	spi_init(hspi);
+	SPI_Init(&hSpiRfid,hspi);
+
+//	spi_init(hspi);
 	mfrc522_reset();
 	mfrc522_write(TModeReg, 0x8D);
     mfrc522_write(TPrescalerReg, 0x3E);
@@ -59,19 +61,34 @@ void mfrc522_init(SPI_HandleTypeDef *hspi)
 
 void mfrc522_write(uint8_t reg, uint8_t data)
 {
-	ENABLE_CHIP();
-	spi_transmit((reg<<1)&0x7E);
-	spi_transmit(data);
-	DISABLE_CHIP();
+	uint8_t txData[2];
+
+	txData[0] = (reg<<1)&0x7E;
+	txData[1] = data;
+	SPI_WriteStream(&hSpiRfid, txData, 2);
+
+	// not working this code(WriteByte)..
+//	SPI_WriteByte(&hSpiRfid, (reg<<1)&0x7E);
+//	SPI_WriteByte(&hSpiRfid, data);
+
+	// original
+//	ENABLE_CHIP();
+//	spi_transmit((reg<<1)&0x7E);
+//	spi_transmit(data);
+//	DISABLE_CHIP();
 }
 
 uint8_t mfrc522_read(uint8_t reg)
 {
-	uint8_t data;	
-	ENABLE_CHIP();
-	spi_transmit(((reg<<1)&0x7E)|0x80);
-	data = spi_transmit(0x00);
-	DISABLE_CHIP();
+	uint8_t data;
+
+	SPI_WriteByte(&hSpiRfid, ((reg<<1)&0x7E)|0x80);
+	data = SPI_ReadByte(&hSpiRfid);
+
+//	ENABLE_CHIP();
+//	spi_transmit(((reg<<1)&0x7E)|0x80);
+//	data = spi_transmit(0x00);
+//	DISABLE_CHIP();
 	return data;
 }
 

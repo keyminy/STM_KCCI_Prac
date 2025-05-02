@@ -16,7 +16,9 @@ typedef struct{
 } SPI_CONTROL_HandleTypedef;
 
 extern SPI_CONTROL_HandleTypedef hSpiFnd;
+extern SPI_CONTROL_HandleTypedef hSpiRfid;
 
+void SPI_Init(SPI_CONTROL_HandleTypedef* hSpi,SPI_HandleTypeDef* hspi);
 void SPI_WriteStream(SPI_CONTROL_HandleTypedef* hSpi,uint8_t* data,uint16_t Size);
 void SPI_WriteByte(SPI_CONTROL_HandleTypedef* hSpi,uint8_t data);
 void SPI_ReadStream(SPI_CONTROL_HandleTypedef* hSpi,uint8_t* data,uint16_t Size);

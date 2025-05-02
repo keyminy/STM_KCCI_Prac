@@ -34,6 +34,7 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 #include "../Controller/StepMotor_Controller.h"
 #include "../Driver/FND.h"
+#include "../Driver/mfrc522.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
