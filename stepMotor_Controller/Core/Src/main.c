@@ -27,6 +27,7 @@
 #include "../Controller/rfid.h"
 #include "../Controller/rfidDatabase.h"
 #include "../Driver/I2C_LCD.h"
+#include "../System/Queue.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -80,10 +81,23 @@ int _write(int file, char *ptr, int len)
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	if(htim->Instance == TIM4){
+		// every 1ms interrupt
 //		FND_ISR_Process();
+		// want to check whether button is pushed every 0.1sec
+		static uint32_t prevTime = 0;
+		if(HAL_GetTick() - prevTime > 100){
+			prevTime = HAL_GetTick();
+			if(Button_GetState(&hButton_RunStop)){
+				EnQueue(&hQue_ButtonRunStop, PUSHED);
+			}else if(Button_GetState(&hButton_Dir)){
+				EnQueue(&hQue_ButtonDir, PUSHED);
+			}else if(Button_GetState(&hButton_Speed)){
+				EnQueue(&hQue_ButtonSpeed, PUSHED);
+			}
+		}
 	}
 	else if(htim->Instance == TIM2){
-//		StepMotor_Control_ISR_Process();
+		StepMotor_Control_ISR_Process();
 	}
 }
 /* USER CODE END 0 */
@@ -122,29 +136,27 @@ int main(void)
   MX_TIM4_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-  StepMotor_Controller_Init();
   i2c_lcd_init();
+  StepMotor_Controller_Init();
   HAL_TIM_Base_Start_IT(&htim4);
+  HAL_TIM_Base_Start_IT(&htim2);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   uint16_t counter = 0;
   printf("Hello??\n");
-  uint8_t buff[30];
+
 
   while (1)
   {
-	  sprintf(buff,"counter : %d",counter++);
-	  move_cursor(0,0);
-	  lcd_string(buff);
-	  HAL_Delay(100);
+	  HAL_Delay(1000); // simulate big code!!!
+	StepMotor_Controller();
 
 	  /* FND */
 //	  FND_SetData(counter++);
 //	  HAL_Delay(100); //100ms = 0.1sec
 
-	/*StepMotor_Controller(); */
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

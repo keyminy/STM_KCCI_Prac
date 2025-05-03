@@ -10,6 +10,7 @@
 #include "main.h"
 #include "../Driver/Button.h"
 #include "../Driver/StepMotor.h"
+#include "../System/Queue.h"
 
 typedef enum {
 	STEPMOTOR_STOP,
