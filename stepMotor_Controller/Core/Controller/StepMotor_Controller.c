@@ -82,7 +82,7 @@ void StepMotor_Control_Stop(void){
 //	if(Button_GetState(&hButton_RunStop)){
 //		stepMotorRunStopState = STEPMOTOR_RUN;
 //		char buff[30];
-//		sprintf(buff, "STEP MOTOR STOP");
+//		sprintf(buff, "STEP MOTOR RUN ");
 //	    move_cursor(0,0);
 //	    lcd_string(buff);
 //	}

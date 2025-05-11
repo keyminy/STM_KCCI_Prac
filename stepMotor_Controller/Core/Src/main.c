@@ -28,6 +28,7 @@
 #include "../Controller/rfidDatabase.h"
 #include "../Driver/I2C_LCD.h"
 #include "../System/Queue.h"
+#include "../Driver/Ultrasonic.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,6 +51,7 @@ I2C_HandleTypeDef hi2c1;
 SPI_HandleTypeDef hspi2;
 
 TIM_HandleTypeDef htim2;
+TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 
 UART_HandleTypeDef huart2;
@@ -66,6 +68,7 @@ static void MX_TIM2_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_TIM4_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_TIM3_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -100,6 +103,26 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 		StepMotor_Control_ISR_Process();
 	}
 }
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+//	if(GPIO_Pin == GPIO_PIN_7)
+//	{
+//		if(HAL_GPIO_ReadPin(Photo_INT_GPIO_Port, Photo_INT_Pin))
+//		{
+//			printf("Rising Edge Interrupt\n");
+//		}
+//		else
+//		{
+//			printf("Falling Edge Interrupt\n");
+//		}
+//	}
+	if(GPIO_Pin == GPIO_PIN_4)
+	{
+		UltraSonic_ISR_Process();
+	}
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -135,23 +158,32 @@ int main(void)
   MX_SPI2_Init();
   MX_TIM4_Init();
   MX_I2C1_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-  i2c_lcd_init();
-  StepMotor_Controller_Init();
+//  i2c_lcd_init();
+//  StepMotor_Controller_Init();
   HAL_TIM_Base_Start_IT(&htim4);
+  HAL_TIM_Base_Start_IT(&htim3);
   HAL_TIM_Base_Start_IT(&htim2);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint16_t counter = 0;
+
   printf("Hello??\n");
 
 
   while (1)
   {
-	  HAL_Delay(1000); // simulate big code!!!
-	StepMotor_Controller();
+	  UltraSonic_Trigger();
+	  if(UltraSonic_IsReady())
+	  {
+		  printf("Distance %dcm\n",UltraSonic_GetDistance());
+	  }
+	  HAL_Delay(1000);
+
+//	  HAL_Delay(1000); // simulate big code!!!
+//	StepMotor_Controller();
 
 	  /* FND */
 //	  FND_SetData(counter++);
@@ -325,6 +357,51 @@ static void MX_TIM2_Init(void)
 }
 
 /**
+  * @brief TIM3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM3_Init(void)
+{
+
+  /* USER CODE BEGIN TIM3_Init 0 */
+
+  /* USER CODE END TIM3_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM3_Init 1 */
+
+  /* USER CODE END TIM3_Init 1 */
+  htim3.Instance = TIM3;
+  htim3.Init.Prescaler = 72-1;
+  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim3.Init.Period = 65535;
+  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM3_Init 2 */
+
+  /* USER CODE END TIM3_Init 2 */
+
+}
+
+/**
   * @brief TIM4 Initialization Function
   * @param None
   * @retval None
@@ -422,7 +499,7 @@ static void MX_GPIO_Init(void)
                           |SPI_RFID_SS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, TRIGGER_Pin|LD2_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(SPI2_SS_GPIO_Port, SPI2_SS_Pin, GPIO_PIN_RESET);
@@ -442,12 +519,24 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : LD2_Pin */
-  GPIO_InitStruct.Pin = LD2_Pin;
+  /*Configure GPIO pins : TRIGGER_Pin LD2_Pin */
+  GPIO_InitStruct.Pin = TRIGGER_Pin|LD2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : ECHO_Pin */
+  GPIO_InitStruct.Pin = ECHO_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(ECHO_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : Photo_INT_Pin */
+  GPIO_InitStruct.Pin = Photo_INT_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(Photo_INT_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : BTN2_Pin BTN3_Pin */
   GPIO_InitStruct.Pin = BTN2_Pin|BTN3_Pin;
@@ -461,6 +550,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(SPI2_SS_GPIO_Port, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI4_IRQn, 0, 3);
+  HAL_NVIC_EnableIRQ(EXTI4_IRQn);
+
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 2);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
 }
 

@@ -41,6 +41,7 @@ extern "C" {
 /* USER CODE BEGIN ET */
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim3;
 extern SPI_HandleTypeDef hspi2;
 extern I2C_HandleTypeDef hi2c1;
 /* USER CODE END ET */
@@ -65,12 +66,20 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define B1_Pin GPIO_PIN_13
 #define B1_GPIO_Port GPIOC
+#define TRIGGER_Pin GPIO_PIN_1
+#define TRIGGER_GPIO_Port GPIOA
 #define USART_TX_Pin GPIO_PIN_2
 #define USART_TX_GPIO_Port GPIOA
 #define USART_RX_Pin GPIO_PIN_3
 #define USART_RX_GPIO_Port GPIOA
+#define ECHO_Pin GPIO_PIN_4
+#define ECHO_GPIO_Port GPIOA
+#define ECHO_EXTI_IRQn EXTI4_IRQn
 #define LD2_Pin GPIO_PIN_5
 #define LD2_GPIO_Port GPIOA
+#define Photo_INT_Pin GPIO_PIN_7
+#define Photo_INT_GPIO_Port GPIOA
+#define Photo_INT_EXTI_IRQn EXTI9_5_IRQn
 #define SPI_RFID_SS_Pin GPIO_PIN_7
 #define SPI_RFID_SS_GPIO_Port GPIOC
 #define TMS_Pin GPIO_PIN_13
