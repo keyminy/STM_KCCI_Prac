@@ -32,7 +32,8 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "../Driver/Button.h"
+#include "../Common/Queue.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

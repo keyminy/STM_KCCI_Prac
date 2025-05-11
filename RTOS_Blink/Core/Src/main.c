@@ -48,6 +48,7 @@ osThreadId myTask02Handle;
 osThreadId myTask03Handle;
 osThreadId myTask04Handle;
 osThreadId myTask05Handle;
+osThreadId myTask06Handle;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -61,6 +62,7 @@ void LED_Task01(void const * argument);
 void LED_Task02(void const * argument);
 void LED_Task03(void const * argument);
 void LED_Task04(void const * argument);
+void Button_Task(void const * argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -140,6 +142,10 @@ int main(void)
   /* definition and creation of myTask05 */
   osThreadDef(myTask05, LED_Task04, osPriorityIdle, 0, 128);
   myTask05Handle = osThreadCreate(osThread(myTask05), NULL);
+
+  /* definition and creation of myTask06 */
+  osThreadDef(myTask06, Button_Task, osPriorityIdle, 0, 128);
+  myTask06Handle = osThreadCreate(osThread(myTask06), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -371,13 +377,45 @@ void LED_Task03(void const * argument)
 void LED_Task04(void const * argument)
 {
   /* USER CODE BEGIN LED_Task04 */
+	uint8_t queData;
   /* Infinite loop */
   for(;;)
   {
-	  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_3);
+	  if(QisEmpty(&hQue_ButtonRunStop) == 0)
+	  {
+		  queData = DeQueue(&hQue_ButtonRunStop);
+	  }
+	  if(queData)
+	  {
+		  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_3);
+	  }
     osDelay(100);
   }
   /* USER CODE END LED_Task04 */
+}
+
+/* USER CODE BEGIN Header_Button_Task */
+/**
+* @brief Function implementing the myTask06 thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_Button_Task */
+void Button_Task(void const * argument)
+{
+  /* USER CODE BEGIN Button_Task */
+	uint8_t data = 0;
+  /* Infinite loop */
+  for(;;)
+  {
+	  if(Button_GetState(&hButton_RunStop))
+	  {
+		  data ^= 1; // data is 1,0 1,0 ,,, every time button is pushed
+		EnQueue(&hQue_ButtonRunStop, data);
+	  }
+    osDelay(50); // check button every 50ms
+  }
+  /* USER CODE END Button_Task */
 }
 
 /**
